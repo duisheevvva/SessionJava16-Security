@@ -3,7 +3,7 @@ package peaksoft.securitysessionproject.dto;
 import lombok.Builder;
 
 @Builder
-public record UserRequest(
+public record SingUpRequest(
         String firstName,
         String lastName,
         String phoneNumber,
