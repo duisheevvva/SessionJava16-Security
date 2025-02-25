@@ -4,12 +4,18 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import peaksoft.securitysessionproject.dto.ProfileResponse;
 import peaksoft.securitysessionproject.entities.User;
 import peaksoft.securitysessionproject.repo.UserRepo;
 
+import java.security.Principal;
 import java.time.ZonedDateTime;
 
 @Component
@@ -46,4 +52,10 @@ public class JwtService {
     public Algorithm getAlgorithm(){
         return Algorithm.HMAC256(secretKey);
     }
+
+    // SecurityContextHolder
+
+
+
+
 }

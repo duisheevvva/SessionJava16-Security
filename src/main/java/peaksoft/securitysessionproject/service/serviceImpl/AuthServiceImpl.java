@@ -1,20 +1,24 @@
 package peaksoft.securitysessionproject.service.serviceImpl;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import peaksoft.securitysessionproject.config.jwtConfig.JwtService;
-import peaksoft.securitysessionproject.dto.AuthResponse;
-import peaksoft.securitysessionproject.dto.SimpleResponse;
-import peaksoft.securitysessionproject.dto.SingInRequest;
-import peaksoft.securitysessionproject.dto.SingUpRequest;
+import peaksoft.securitysessionproject.dto.*;
 import peaksoft.securitysessionproject.entities.User;
 import peaksoft.securitysessionproject.enums.Role;
 import peaksoft.securitysessionproject.repo.UserRepo;
 import peaksoft.securitysessionproject.service.AuthService;
+
+import java.security.Principal;
+
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
@@ -23,6 +27,24 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
+
+    // Init  method arkyluu  dev admin
+    @PostConstruct
+    public void initSaveAdmin(){
+        User user = User
+                .builder()
+                .firstName("Admin")
+                .lastName("Adminov")
+                .phoneNumber("702456789")
+                .email("admin@gmail.com")
+                .password(passwordEncoder.encode("admin123"))
+                .role(Role.ADMIN)
+                .build();
+        if (!userRepo.existsByEmail(user.getEmail())) {
+            userRepo.save(user);
+        }
+
+    }
 
     @Override
     public AuthResponse singUp(SingUpRequest singUpRequest) {
@@ -66,5 +88,34 @@ public class AuthServiceImpl implements AuthService {
                 .token(token)
                 .role(user.getRole())
                 .build();
+    }
+
+    public ProfileResponse getProfile(){
+        SecurityContext securityContext  = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        String email = authentication.getName();
+        User user = userRepo.findUserByEmail(email).orElseThrow(()
+                -> new EntityNotFoundException(String.format("User not found")));
+        return ProfileResponse
+                .builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .role(user.getRole())
+                .build();
+    }
+
+    // Principal
+    public ProfileResponse getProfileWithPrincipal(Principal principal){
+        String email = principal.getName();
+        User user = userRepo.findUserByEmail(email).orElseThrow(()
+                -> new EntityNotFoundException(String.format("User not found")));
+
+        return ProfileResponse
+                .builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .role(user.getRole())
+                .build();
+
     }
 }

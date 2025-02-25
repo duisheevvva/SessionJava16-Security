@@ -1,14 +1,8 @@
 package peaksoft.securitysessionproject.api;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import peaksoft.securitysessionproject.dto.AuthResponse;
-import peaksoft.securitysessionproject.dto.SimpleResponse;
-import peaksoft.securitysessionproject.dto.SingInRequest;
-import peaksoft.securitysessionproject.dto.SingUpRequest;
+import org.springframework.web.bind.annotation.*;
+import peaksoft.securitysessionproject.dto.*;
 import peaksoft.securitysessionproject.service.AuthService;
 
 @RestController
@@ -26,6 +20,11 @@ public class AuthApi {
     @PostMapping("/singIn")
     public AuthResponse singIn(@RequestBody SingInRequest singInRequest){
         return authService.singIn(singInRequest);
+    }
+
+    @GetMapping
+    public ProfileResponse getProfile(){
+        return  authService.getProfile();
     }
 
 
